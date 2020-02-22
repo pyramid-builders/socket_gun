@@ -35,3 +35,23 @@ while True:
             if user is False:
                 continue
             socket_list.append(client_socket)
+            clients[client_socket] = user
+
+            print(f"Accepted new connection from {client_address[0]}:{client_address[1]} username:{user['data'].decode('utf-8')}")
+        else:
+            message = receive_message(notified_socket)
+            if message is false:
+                print(f'Closed connection from {clients[notified_socket]['data'].decode('utf-8')}')
+                socket_list.remove(notified_socket)
+                del clients[notified_socket]
+                continue
+        user = clients[notified_socket]
+        print(f'Received message from {user['data'].decode('utf-8')}: {message['data'].decode('utf-8')}')
+        
+        for client_socket in clients:
+            if client_socket != notified_socket:
+                client_socket.send(user['header'] + user['data'] + message['data'])
+    
+    for notified_socket in exception_sockets:
+        sockets_list.remove(notified_socket)
+        del clients[notified_socket]
