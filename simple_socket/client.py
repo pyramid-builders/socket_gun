@@ -1,30 +1,32 @@
 import socket
 import sys
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+class socket_client(object):
+    def __init__(self, host_addr):
+        self.host_addr = host_addr
+    # Create a TCP/IP socket
+    def send_message(self, message):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Connect the socket to the port where the server is listening
-server_address = ('localhost', 10000)
-print('connecting to {} port {}'.format(*server_address))
-sock.connect(server_address)
+        # Connect the socket to the port where the server is listening
+        server_address = (self.host_addr, 10000)
+        print('connecting to {} port {}'.format(*server_address))
+        sock.connect(server_address)
 
-try:
+        try:
+            # Send data
+            # message = b'This is the message.  It will be repeated.'
+            print('sending {!r}'.format(b'{message}'))
+            sock.sendall(b'{message}')
+            # Look for the response
+            amount_received = 0
+            amount_expected = len(message)
 
-    # Send data
-    message = b'This is the message.  It will be repeated.'
-    print('sending {!r}'.format(message))
-    sock.sendall(message)
+            while amount_received < amount_expected:
+                data = sock.recv(16)
+                amount_received += len(data)
+                print('received {!r}'.format(data))
 
-    # Look for the response
-    amount_received = 0
-    amount_expected = len(message)
-
-    while amount_received < amount_expected:
-        data = sock.recv(16)
-        amount_received += len(data)
-        print('received {!r}'.format(data))
-
-finally:
-    print('closing socket')
-    sock.close()
+        finally:
+            print('closing socket')
+            sock.close()
